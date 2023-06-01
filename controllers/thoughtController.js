@@ -31,7 +31,7 @@ module.exports = {
         Thought.create(body)
             .then(({ _id }) => {
                 User.findOneAndUpdate(
-                    { _id: params.userId },
+                    { _id: body.userId },
                     { $push: { thoughts: _id } },
                     { new: true }
                 )
@@ -40,7 +40,7 @@ module.exports = {
                             res.sendStatus(404);
                             return;
                         }
-                        res.json(dbUserData);
+                        res.json({msg: 'Thought successfully created!', data: dbUserData});
                     })
                     .catch(err => res.json(err));
             })
@@ -54,7 +54,7 @@ module.exports = {
                     res.sendStatus(404);
                     return;
                 }
-                res.json(dbThoughtData);
+                res.json({msg: 'Thought successfully updated!', data: dbThoughtData});
             })
             .catch(err => res.json(err));
     },
@@ -77,7 +77,7 @@ module.exports = {
                     res.sendStatus(404);
                     return;
                 }
-                res.json(dbUserData);
+                res.json({msg: 'Thought successfully deleted!', data: dbUserData});
             })
             .catch(err => res.json(err));
     },
@@ -93,7 +93,7 @@ module.exports = {
                     res.sendStatus(404);
                     return;
                 }
-                res.json(dbThoughtData);
+                res.json({msg: 'Reaction successfully added!', data: dbThoughtData});
             })
             .catch(err => res.json(err));
     },
@@ -104,7 +104,7 @@ module.exports = {
             { $pull: { reactions: { reactionId: params.reactionId } } },
             { new: true, runValidators: true }
             )
-            .then(dbThoughtData => res.json(dbThoughtData))
+            .then(dbThoughtData => res.json({msg: 'Reaction successfully deleted!', data: dbThoughtData}))
             .catch(err => res.json(err));
         }
 }

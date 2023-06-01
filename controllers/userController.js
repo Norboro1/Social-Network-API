@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 module.exports = {
 
@@ -32,7 +32,7 @@ module.exports = {
 
     addUser({ body }, res) {
         User.create(body)
-            .then(dbUserData => res.json(dbUserData))
+            .then(dbUserData => res.json({msg: 'User created!',data: dbUserData}))
             .catch(err => {
                 console.log(err);
                 res.sendStatus(400);
@@ -46,7 +46,7 @@ module.exports = {
                     res.sendStatus(404);
                     return;
                 }
-                res.json(dbUserData);
+                res.json({msg: 'User successfully Updated!', data: dbUserData});
             })
             .catch(err => {
                 console.log(err);
@@ -62,7 +62,14 @@ module.exports = {
                     return;
                 }
 
-                res.json(dbUserData);
+                Thought.deleteMany({ username: dbUserData.username })
+                    .then(() => {
+                        res.json({msg: 'User successfully Deleted!', data: dbUserData});
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.sendStatus(400);
+                    });
             })
             .catch(err => {
                 console.log(err);
@@ -73,7 +80,7 @@ module.exports = {
     addFriend({ params }, res) {
         User.findOneAndUpdate(
             { _id: params.id },
-            { $push: { friends: params.friendId } },
+            { $addToSet: { friends: params.friendId } },
             { new: true }
         )
             .then(dbUserData => {
@@ -81,7 +88,7 @@ module.exports = {
                     res.sendStatus(404);
                     return;
                 }
-                res.json(dbUserData);
+                res.json({msg: 'Friend successfully Added!', data: dbUserData});
             })
             .catch(err => {
                 console.log(err);
@@ -94,7 +101,7 @@ module.exports = {
             { _id: params.id },
             { $pull: { friends: params.friendId } },
             { new: true } )
-            .then(dbUserData => res.json(dbUserData))
+            .then(dbUserData => res.json({msg: 'Friend successfully Deleted!', data: dbUserData}))
             .catch(err => {
                 console.log(err);
                 res.sendStatus(400);
