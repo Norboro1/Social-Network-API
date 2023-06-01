@@ -39,19 +39,63 @@ module.exports = {
             });
     },
 
-    updateUser({ params, body }, res) {
-        User.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
+    async updateUser({ params, body }, res) {
+        try{
+            let oldUsername = '';
+            if(body.username){
+                const userData = await User.findById(params.id);
+                oldUsername = userData.username;
+            }
+    
+            const newUserData = await User.findOneAndUpdate({ _id: params.id }, body, { runValidators: true, new: true });
+
+            if (!newUserData) {
+                res.sendStatus(404);
+                return;
+            }
+
+            if(body.username){
+                await Thought.updateMany({ username: oldUsername }, { username: body.username })
+                console.log('Username updated in thoughts');
+            }
+
+            res.json({msg: 'User successfully Updated!', data: newUserData});
+
+        } catch (err) {
+            console.log(err);
+            res.sendStatus(400);
+        }
+
+
+
+
+       /* User.findOneAndUpdate({ _id: params.id }, body, { runValidators: true })
             .then(dbUserData => {
                 if (!dbUserData) {
                     res.sendStatus(404);
                     return;
                 }
-                res.json({msg: 'User successfully Updated!', data: dbUserData});
+
+                Thought.updateMany({ username: dbUserData.username }, { username: body.username })
+                    .then(() => {
+                        User.findOne({ _id: params.id })
+                            .then(updatedUserData => {
+                                res.json({msg: 'User successfully Updated!', data: updatedUserData});
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.sendStatus(400);
+                            });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.sendStatus(400);
+                    });
             })
             .catch(err => {
                 console.log(err);
                 res.sendStatus(400);
-            });
+            }); */
     },
 
     deleteUser({ params }, res) {
