@@ -65,37 +65,6 @@ module.exports = {
             console.log(err);
             res.sendStatus(400);
         }
-
-
-
-
-       /* User.findOneAndUpdate({ _id: params.id }, body, { runValidators: true })
-            .then(dbUserData => {
-                if (!dbUserData) {
-                    res.sendStatus(404);
-                    return;
-                }
-
-                Thought.updateMany({ username: dbUserData.username }, { username: body.username })
-                    .then(() => {
-                        User.findOne({ _id: params.id })
-                            .then(updatedUserData => {
-                                res.json({msg: 'User successfully Updated!', data: updatedUserData});
-                            })
-                            .catch(err => {
-                                console.log(err);
-                                res.sendStatus(400);
-                            });
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        res.sendStatus(400);
-                    });
-            })
-            .catch(err => {
-                console.log(err);
-                res.sendStatus(400);
-            }); */
     },
 
     deleteUser({ params }, res) {
